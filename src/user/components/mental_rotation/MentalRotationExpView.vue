@@ -8,6 +8,9 @@ import ShepardMetzlerStim from './ShepardMetzlerStim.vue'
 
 const api = useViewAPI()
 
+api.persist.totalTrials = api.persist.totalTrials || 0
+api.persist.correctTrials = api.persist.correctTrials || 0
+
 // Define a set of Shepard-Metzler stimulus configurations
 // Format: "L1D1-L2D2-L3D3-L4D4" where L=length(2-4), D=direction
 const stimulusConfigs = [
@@ -699,21 +702,27 @@ trials[0]
 
 trials.append([{ id: 'summary' }])
 
+// Initialize persistent tracking for accuracy
+if (!api.persist.isDefined('totalTrials')) {
+  api.persist.totalTrials = 0
+  api.persist.correctTrials = 0
+}
+
 // Start timer
 if (!api.isTimerStarted()) {
   api.startTimer()
 }
 
 // Autofill function
-function autofill() {
-  while (api.stepIndex < api.nSteps) {
-    api.faker.render(api.stepData)
-    api.recordStep()
-    api.goNextStep()
-  }
-}
+// function autofill() {
+//   while (api.stepIndex < api.nSteps) {
+//     api.faker.render(api.stepData)
+//     api.recordStep()
+//     api.goNextStep()
+//   }
+// }
 
-api.setAutofill(autofill)
+// api.setAutofill(autofill)
 
 // Handle 'S' (same) and 'D' (different) key presses
 const stop = api.onKeyDown(
@@ -728,6 +737,13 @@ const stop = api.onKeyDown(
       api.stepData.rt = reactionTime
       api.stepData.response = response
       api.stepData.correct = isCorrect ? 1 : 0
+
+      // Update accuracy tracking
+      api.persist.totalTrials++
+      if (isCorrect) {
+        api.persist.correctTrials++
+      }
+
       api.recordStep()
       api.goNextStep()
       api.startTimer() // Restart timer for next trial
@@ -790,17 +806,29 @@ function finish() {
 
     <!-- Summary screen -->
     <div class="text-center" v-else>
-      <p class="text-lg text-muted-foreground mb-6">Thanks! You have finished viewing the stimuli.</p>
-      <Button variant="default" size="lg" @click="finish()">
-        Continue
-        <svg class="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20">
-          <path
-            fill-rule="evenodd"
-            d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-            clip-rule="evenodd"
-          />
-        </svg>
-      </Button>
+      <h2 class="text-2xl font-bold mb-4">Task Complete!</h2>
+      <p class="text-lg text-muted-foreground mb-2">Thanks! You have finished the mental rotation task.</p>
+      <div class="bg-muted rounded-lg p-6 inline-block mb-6">
+        <p class="text-lg font-medium">
+          You answered <span class="text-primary font-bold">{{ api.persist.correctTrials }}</span> out of
+          <span class="font-bold">{{ api.persist.totalTrials }}</span> trials correctly.
+        </p>
+        <p class="text-2xl font-bold mt-2">
+          Accuracy: {{ Math.round((api.persist.correctTrials / api.persist.totalTrials) * 100) }}%
+        </p>
+      </div>
+      <div>
+        <Button variant="default" size="lg" @click="finish()">
+          Continue
+          <svg class="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </Button>
+      </div>
     </div>
   </ConstrainedTaskWindow>
 </template>
