@@ -223,17 +223,17 @@ timeline.pushSeqView({
   component: DeviceSurveyView,
 })
 
-// data download
-timeline.pushSeqView({
-  name: 'data_download',
-  component: MentalRotationExporter,
-})
-
 // debriefing form
 timeline.pushSeqView({
   name: 'feedback',
   component: TaskFeedbackSurveyView,
   meta: { setDone: true }, // this is the last form
+})
+
+// data download
+timeline.pushSeqView({
+  name: 'data_download',
+  component: MentalRotationExporter,
 })
 
 // thanks/submit page

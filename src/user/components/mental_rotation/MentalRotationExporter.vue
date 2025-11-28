@@ -17,6 +17,7 @@ const csvColumns = [
   'mirror',
   'disparity',
   'response',
+  'inputMethod',
   'correct',
   'rt',
   'leftRotationX',

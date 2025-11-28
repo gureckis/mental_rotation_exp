@@ -8,9 +8,6 @@ import ShepardMetzlerStim from './ShepardMetzlerStim.vue'
 
 const api = useViewAPI()
 
-api.persist.totalTrials = api.persist.totalTrials || 0
-api.persist.correctTrials = api.persist.correctTrials || 0
-
 // Define a set of Shepard-Metzler stimulus configurations
 // Format: "L1D1-L2D2-L3D3-L4D4" where L=length(2-4), D=direction
 const stimulusConfigs = [
@@ -682,6 +679,7 @@ const trials = api.steps.append([
     id: 'mr',
     rt: () => api.faker.rnorm(2000, 500),
     response: () => api.faker.rchoice(['s', 'd']),
+    inputMethod: () => api.faker.rchoice(['keyboard', 'button']),
     correct: () => api.faker.rbinom(1, 0.8),
   },
 ])
@@ -703,10 +701,8 @@ trials[0]
 trials.append([{ id: 'summary' }])
 
 // Initialize persistent tracking for accuracy
-if (!api.persist.isDefined('totalTrials')) {
-  api.persist.totalTrials = 0
-  api.persist.correctTrials = 0
-}
+api.persist.totalTrials = api.persist.totalTrials || 0
+api.persist.correctTrials = api.persist.correctTrials || 0
 
 // Start timer
 if (!api.isTimerStarted()) {
@@ -724,34 +720,40 @@ if (!api.isTimerStarted()) {
 
 // api.setAutofill(autofill)
 
+// Handle response (either 's' for same or 'd' for different)
+// inputMethod: 'keyboard' or 'button'
+function handleResponse(response, inputMethod) {
+  if (api.stepIndex < api.nSteps && api.path[0] === 'mr') {
+    const reactionTime = api.elapsedTime()
+    const isCorrect = (response === 's' && !api.stepData.mirror) || (response === 'd' && api.stepData.mirror)
+
+    api.stepData.rt = reactionTime
+    api.stepData.response = response
+    api.stepData.inputMethod = inputMethod
+    api.stepData.correct = isCorrect ? 1 : 0
+
+    // Update accuracy tracking
+    api.persist.totalTrials++
+    if (isCorrect) {
+      api.persist.correctTrials++
+    }
+
+    api.recordStep()
+    api.goNextStep()
+    api.startTimer() // Restart timer for next trial
+
+    if (api.path[0] === 'summary') {
+      stop()
+    }
+  }
+}
+
 // Handle 'S' (same) and 'D' (different) key presses
 const stop = api.onKeyDown(
   ['s', 'S', 'd', 'D'],
   (e) => {
-    if (api.stepIndex < api.nSteps && api.path[0] === 'mr') {
-      e.preventDefault()
-      const reactionTime = api.elapsedTime()
-      const response = e.key.toLowerCase()
-      const isCorrect = (response === 's' && !api.stepData.mirror) || (response === 'd' && api.stepData.mirror)
-
-      api.stepData.rt = reactionTime
-      api.stepData.response = response
-      api.stepData.correct = isCorrect ? 1 : 0
-
-      // Update accuracy tracking
-      api.persist.totalTrials++
-      if (isCorrect) {
-        api.persist.correctTrials++
-      }
-
-      api.recordStep()
-      api.goNextStep()
-      api.startTimer() // Restart timer for next trial
-
-      if (api.path[0] === 'summary') {
-        stop()
-      }
-    }
+    e.preventDefault()
+    handleResponse(e.key.toLowerCase(), 'keyboard')
   },
   { dedupe: true }
 )
@@ -797,10 +799,15 @@ function finish() {
           class="border border-gray-300 rounded-full"
         />
       </div>
-      <p class="text-lg font-medium text-muted-foreground max-w-xl mt-6">
-        Quickly press 'S' if these are the same items just rotated, or 'D' if they are different objects and cannot be
-        rotated into alignment.
-      </p>
+      <p class="text-lg font-medium text-muted-foreground max-w-xl mt-6">Are these the same object, just rotated?</p>
+      <div class="flex items-center gap-4 mt-4">
+        <Button variant="outline" size="lg" @click="handleResponse('s', 'button')" class="min-w-32">
+          <span class="font-bold">S</span>ame
+        </Button>
+        <Button variant="outline" size="lg" @click="handleResponse('d', 'button')" class="min-w-32">
+          <span class="font-bold">D</span>ifferent
+        </Button>
+      </div>
       <p class="text-sm text-muted-foreground mt-4">Trial {{ api.stepIndex + 1 }} of {{ api.nSteps - 1 }}</p>
     </div>
 

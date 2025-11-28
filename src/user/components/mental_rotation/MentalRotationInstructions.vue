@@ -411,7 +411,8 @@ onUnmounted(() => {
               <div class="text-left">
                 <p class="text-lg font-semibold">Same Object</p>
                 <p class="text-muted-foreground">
-                  Press <strong>S</strong> if the two objects are the same (just rotated)
+                  Press <strong>S</strong> or tap the <strong>Same</strong> button if the two objects are the same (just
+                  rotated)
                 </p>
               </div>
             </div>
@@ -425,7 +426,8 @@ onUnmounted(() => {
               <div class="text-left">
                 <p class="text-lg font-semibold">Different Objects</p>
                 <p class="text-muted-foreground">
-                  Press <strong>D</strong> if the two objects are different (not just rotated)
+                  Press <strong>D</strong> or tap the <strong>Different</strong> button if the two objects are different
+                  (not just rotated)
                 </p>
               </div>
             </div>
