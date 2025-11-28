@@ -1,49 +1,31 @@
 <p align="center">
-<a href="https://smile.gureckislab.org/" target="_blank">
-<img src="https://smile.gureckislab.org/images/smile.svg" alt="smile" height="150" />
-</a>
-
-<p align="center">
-<i>A happy approach to online behavioral research.</i>
+  <img src="public/mentalrotation.png" alt="Mental Rotation Stimuli" />
 </p>
 
+<h1 align="center">Mental Rotation Experiment</h1>
+
 <p align="center">
-<a href="https://github.com/nyuccl/smile/releases" alt="GitHub release"><img src="https://img.shields.io/github/v/release/nyuccl/smile"></a>
-<a href="https://github.com/nyuccl/smile/actions" alt="Build Status"><img src="https://github.com/nyuccl/smile/actions/workflows/deploy.yml/badge.svg"></a>
-<a href="https://github.com/nyuccl/smile/actions" alt="Doc Build Status"><img src="https://github.com/nyuccl/smile/actions/workflows/docs-deploy.yml/badge.svg"></a>
+A browser-based implementation of the classic Shepard & Metzler (1971) mental rotation task, built with the <a href="https://smile.gureckislab.org">Smile</a> framework.
 </p>
 
-<br />
+## Features
 
-The Smile project is a new way to develop rich and interactive online experiments. Smile prioritizes modularity and reusability. Unlike tools that cater to non-programmers, Smile is designed to help reasonably competent programmers accomplish more in less time.
+- **Shepard-Metzler stimuli** - 3D block figures rendered in real-time using [Three.js](https://threejs.org/)
+- **Shortened task version** - A streamlined version of the classic paradigm suitable for online studies
+- **Stimulus builder tool** - Interactive tool for designing and configuring custom stimulus pairs with different rotations and mirror conditions
+- **Data export** - Participants can view and copy their trial data for quick self-analysis
 
-Online docs: [https://smile.gureckislab.org](https://smile.gureckislab.org)
+## About the Task
 
-### Highlighted features:
+In this task, participants view pairs of 3D block figures and judge whether they are the same object (just rotated) or different objects (mirror images). The classic finding from Shepard & Metzler's research is that reaction time increases linearly with the angle of rotation between objects.
 
-- 🌈 Fast and fun front-end interface development with [Vue.js](https://vuejs.org),
-  [Tailwind CSS](https://tailwindcss.com/), and
-  [Shadcn/vue](https://www.shadcn-vue.com/). Create complex games, animations, and
-  surveys with ease.
-- 👩‍💻 Custom [developer mode tools](https://smile.gureckislab.org/coding/developing.html) provide a novel interface for specifying and debugging interactive
-  experiments. Quickly jump between phases and trials in your experiments,
-  [autofill forms and generate mock data for testing](https://smile.gureckislab.org/coding/autofill.html),
-  [hot-reload](https://smile.gureckislab.org/coding/developing.html#hot-module-replacement) your code without restarting the entire experiment, and more!
-- 🧩 Built-in support for
-  [common experiment elements](https://smile.gureckislab.org/coding/views.html#built-in-views) like consent forms,
-  instructions, and surveys. Just add your custom experiment logic and start
-  collecting data.
-- 🤖 Code writing is greatly accelerated using AI tools, as LLMs are
-  trained on extensive codebases covering Vue, Tailwind, and other popular web
-  standards used by the project.
-- 👫 Supports multiple [recruitment services](https://smile.gureckislab.org/recruit/recruitment.html)
-  including Prolific, MTurk, CloudResearch, and more.
-- 📝 [Data provenance features](https://smile.gureckislab.org/analysis.html#data-provenance) include an audit trail
-  of which version of the code was used to create each data file.
-- 😎 Great-looking and detailed docs, if we do say so ourselves!
+## Built with Smile
+
+This experiment is built using [Smile](https://smile.gureckislab.org), a framework for developing online behavioral experiments.
+
+- [Smile Documentation](https://smile.gureckislab.org)
+- [Smile GitHub Repository](https://github.com/nyuccl/smile)
 
 ## License
 
-MIT License © 2022 [Todd Gureckis](https://todd.gureckislab.org)
-
-_Initial development was supported by National Science Foundation Grant [BCS-2121102](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2121102&HistoricalAwards=false) to T. M. Gureckis._
+MIT License

@@ -21,7 +21,6 @@ import MTurkRecruitView from '@/builtins/mturk/MTurkRecruitView.vue'
 import InformedConsentView from '@/builtins/informedConsent/InformedConsentView.vue'
 import DemographicSurveyView from '@/builtins/demographicSurvey/DemographicSurveyView.vue'
 import DeviceSurveyView from '@/builtins/deviceSurvey/DeviceSurveyView.vue'
-import InstructionsView from '@/builtins/instructions/InstructionsView.vue'
 import InstructionsQuizView from '@/builtins/instructionsQuiz/InstructionsQuiz.vue'
 import DebriefView from '@/builtins/debrief/DebriefView.vue'
 import TaskFeedbackSurveyView from '@/builtins/taskFeedbackSurvey/TaskFeedbackSurveyView.vue'
@@ -30,10 +29,10 @@ import WithdrawView from '@/builtins/withdraw/WithdrawView.vue'
 import WindowSizerView from '@/builtins/windowSizer/WindowSizerView.vue'
 
 // 2. Import user View components
-import ExpView from '@/builtins/demoTasks/ExpView.vue'
-import FavoriteNumber from '@/builtins/demoTasks/FavoriteNumber.vue'
-import FavoriteColor from '@/builtins/demoTasks/FavoriteColor.vue'
-import StroopExpView from '@/user/components/stroop_exp/StroopExpView.vue'
+import MentalRotationInstructions from '@/user/components/mental_rotation/MentalRotationInstructions.vue'
+import MentalRotationBuilder from '@/user/components/mental_rotation/MentalRotationBuilder.vue'
+import MentalRotationExpView from '@/user/components/mental_rotation/MentalRotationExpView.vue'
+import MentalRotationExporter from '@/user/components/mental_rotation/MentalRotationExporter.vue'
 
 // #3. Import smile API and timeline
 import useAPI from '@/core/composables/useAPI'
@@ -85,10 +84,10 @@ api.setAppComponent('informed_consent_text', InformedConsentText)
 // you can also optionally set randomization weights for each condition. For
 // example, if you want twice as many participants to be assigned to instructions
 // version 1 compared to versions 2 and 3, you can set the weights as follows:
-api.randomAssignCondition({
-  instructionsVersion: ['1', '2', '3'],
-  weights: [2, 1, 1], // weights are automatically normalized, so [4, 2, 2] would be the same
-})
+// api.randomAssignCondition({
+//   instructionsVersion: ['1', '2', '3'],
+//   weights: [2, 1, 1], // weights are automatically normalized, so [4, 2, 2] would be the same
+// })
 
 // #6. Define and add some routes to the timeline
 // Each route should map to a View component.
@@ -180,7 +179,7 @@ timeline.pushSeqView({
 // instructions
 timeline.pushSeqView({
   name: 'instructions',
-  component: InstructionsView,
+  component: MentalRotationInstructions,
 })
 
 // import the quiz questions
@@ -196,38 +195,16 @@ timeline.pushSeqView({
   },
 })
 
-// main experiment
-// note: by default, the path will be set to the name of the view
-// however, you can override this by setting the path explicitly
+// mental rotation
 timeline.pushSeqView({
-  name: 'exp',
-  path: '/experiment',
-  component: ExpView,
+  name: 'mental_rotation_exp',
+  component: MentalRotationExpView,
 })
 
-////// example of randomized branching routes
-// (you can also have conditional branching based on conditions -- see docs)
-
-// routes must be initially registered, to tell the timeline they exist
+// mental rotation
 timeline.registerView({
-  name: 'number',
-  component: FavoriteNumber,
-})
-
-timeline.registerView({
-  name: 'color',
-  component: FavoriteColor,
-})
-
-timeline.pushRandomizedNode({
-  name: 'RandomSplit',
-  options: [['number'], ['color']],
-})
-
-// stroop exp
-timeline.pushSeqView({
-  name: 'stroop',
-  component: StroopExpView,
+  name: 'mental_rotation_builder',
+  component: MentalRotationBuilder,
 })
 
 // debriefing form
@@ -245,6 +222,12 @@ timeline.pushSeqView({
   name: 'device',
   component: DeviceSurveyView,
 })
+
+// data download
+// timeline.pushSeqView({
+//   name: 'data_download',
+//   component: MentalRotationExporter,
+// })
 
 // debriefing form
 timeline.pushSeqView({

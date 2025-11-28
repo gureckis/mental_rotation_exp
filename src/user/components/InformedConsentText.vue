@@ -9,9 +9,8 @@
     </p>
     <ul class="pl-8 pt-3 pb-3 list-square">
       <li>
-        Participation in this study will take about 30 minutes to complete, and you will receive $4.50 for your
-        participation. As an additional incentive to try your best at the task, you may earn a cash bonus of up to
-        $10.00 based on your performance.
+        Participation in this study will take about 20 minutes to complete, and you will receive $5 for your
+        participation.
       </li>
       <li>When you complete the study, a thorough verbal and written explanation of it will be provided.</li>
       <li>In addition, by agreeing to participate, you understand you must be 18 years or older to participate.</li>
