@@ -1,5 +1,7 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
+import { toast } from 'vue-sonner'
+import { ClipboardCopy, ArrowRight, FileSpreadsheet } from 'lucide-vue-next'
 import useViewAPI from '@/core/composables/useViewAPI'
 import { Button } from '@/uikit/components/ui/button'
 import { Textarea } from '@/uikit/components/ui/textarea'
@@ -7,27 +9,64 @@ import { ConstrainedTaskWindow } from '@/uikit/layouts'
 
 const api = useViewAPI()
 
-// Get study data from store
-const studyDataJson = computed(() => {
-  return JSON.stringify(api.store.data.studyData, null, 2)
-})
+// CSV columns for mental rotation trials
+const csvColumns = [
+  'trial',
+  'userId',
+  'config',
+  'mirror',
+  'disparity',
+  'response',
+  'correct',
+  'rt',
+  'leftRotationX',
+  'leftRotationY',
+  'leftRotationZ',
+  'rightRotationX',
+  'rightRotationY',
+  'rightRotationZ',
+  'rightDeltaX',
+  'rightDeltaY',
+  'rightDeltaZ',
+]
 
-// Copy status feedback
-const copyStatus = ref('')
+// Convert study data to CSV format (only mental rotation trials)
+const studyDataCsv = computed(() => {
+  const studyData = api.store.data.studyData || []
+  const userId = api.store.getShortId
+
+  // Filter only mental rotation trials (those with rightDeltaX property)
+  const mrTrials = studyData.filter((trial) => 'rightDeltaX' in trial)
+
+  // Create CSV header
+  const header = csvColumns.join(',')
+
+  // Create CSV rows
+  const rows = mrTrials.map((trial, index) => {
+    return csvColumns
+      .map((col) => {
+        if (col === 'trial') return index + 1
+        if (col === 'userId') return userId
+        const value = trial[col]
+        // Handle values that might contain commas or quotes
+        if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
+          return `"${value.replace(/"/g, '""')}"`
+        }
+        return value ?? ''
+      })
+      .join(',')
+  })
+
+  return [header, ...rows].join('\n')
+})
 
 // Copy to clipboard function
 async function copyToClipboard() {
   try {
-    await navigator.clipboard.writeText(studyDataJson.value)
-    copyStatus.value = 'Copied!'
-    setTimeout(() => {
-      copyStatus.value = ''
-    }, 2000)
+    await navigator.clipboard.writeText(studyDataCsv.value)
+    toast.success('Copied to clipboard!', { position: 'bottom-right', style: { right: '1rem', left: 'auto' } })
   } catch (err) {
-    copyStatus.value = 'Failed to copy'
-    setTimeout(() => {
-      copyStatus.value = ''
-    }, 2000)
+    toast.error('Failed to copy to clipboard', { position: 'bottom-right', style: { right: '1rem', left: 'auto' } })
   }
 }
 
@@ -43,40 +82,30 @@ function finish() {
     :width="api.config.windowsizerRequest.width"
     :height="700"
   >
-    <div class="flex flex-col items-center gap-4 p-4">
-      <h2 class="text-2xl font-bold">Your Data</h2>
-      <p class="text-muted-foreground text-center max-w-lg">
-        Below is the data from your mental rotation task. You can copy it to your clipboard to save it.
+    <div class="flex flex-col gap-4 p-4 max-w-2xl mx-auto">
+      <h2 class="text-2xl font-bold flex items-center gap-2">
+        <FileSpreadsheet class="w-6 h-6" />
+        Your Data
+      </h2>
+      <p class="text-muted-foreground">
+        Below is the anonymized data from your mental rotation task in CSV format. You can copy it to your clipboard to
+        save it.
       </p>
 
-      <div class="w-full max-w-2xl">
-        <Textarea
-          readonly
-          :model-value="studyDataJson"
-          class="h-64 font-mono text-sm resize-none"
-        />
+      <div class="w-full">
+        <Textarea readonly :model-value="studyDataCsv" class="h-64 font-mono text-sm resize-none bg-background" />
       </div>
 
       <div class="flex items-center gap-4">
-        <Button variant="outline" @click="copyToClipboard">
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-          </svg>
+        <Button variant="outline" size="lg" @click="copyToClipboard">
+          <ClipboardCopy class="w-4 h-4 mr-2" />
           Copy to Clipboard
         </Button>
-        <span v-if="copyStatus" class="text-sm text-green-600 dark:text-green-400">{{ copyStatus }}</span>
+        <Button variant="default" size="lg" @click="finish">
+          Continue
+          <ArrowRight class="w-4 h-4 ml-2" />
+        </Button>
       </div>
-
-      <Button variant="default" size="lg" class="mt-4" @click="finish">
-        Continue
-        <svg class="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20">
-          <path
-            fill-rule="evenodd"
-            d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-            clip-rule="evenodd"
-          />
-        </svg>
-      </Button>
     </div>
   </ConstrainedTaskWindow>
 </template>

@@ -224,10 +224,10 @@ timeline.pushSeqView({
 })
 
 // data download
-// timeline.pushSeqView({
-//   name: 'data_download',
-//   component: MentalRotationExporter,
-// })
+timeline.pushSeqView({
+  name: 'data_download',
+  component: MentalRotationExporter,
+})
 
 // debriefing form
 timeline.pushSeqView({
