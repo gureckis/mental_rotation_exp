@@ -222,6 +222,7 @@ function prevStep() {
 }
 
 function finish() {
+  api.goFirstStep() // reset the state in case you loop back
   api.goNextView()
 }
 

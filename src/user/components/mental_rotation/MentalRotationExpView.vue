@@ -797,10 +797,15 @@ function finish() {
           class="border border-gray-300 rounded-full"
         />
       </div>
-      <p class="text-lg font-medium text-muted-foreground max-w-xl mt-6">
-        Quickly press 'S' if these are the same items just rotated, or 'D' if they are different objects and cannot be
-        rotated into alignment.
-      </p>
+      <p class="text-lg font-medium text-muted-foreground max-w-xl mt-6">Are these two views of the same object?</p>
+      <div class="flex items-center gap-4 mt-4">
+        <Button variant="outline" size="lg" @click="handleResponse('s', 'button')" class="min-w-32">
+          <span class="font-bold">S</span>ame
+        </Button>
+        <Button variant="outline" size="lg" @click="handleResponse('d', 'button')" class="min-w-32">
+          <span class="font-bold">D</span>ifferent
+        </Button>
+      </div>
       <p class="text-sm text-muted-foreground mt-4">Trial {{ api.stepIndex + 1 }} of {{ api.nSteps - 1 }}</p>
     </div>
 
