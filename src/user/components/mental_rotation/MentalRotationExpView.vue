@@ -799,7 +799,7 @@ function finish() {
           class="border border-gray-300 rounded-full"
         />
       </div>
-      <p class="text-lg font-medium text-muted-foreground max-w-xl mt-6">Are these the same object, just rotated?</p>
+      <p class="text-lg font-medium text-muted-foreground max-w-xl mt-6">Are these two views of the same object?</p>
       <div class="flex items-center gap-4 mt-4">
         <Button variant="outline" size="lg" @click="handleResponse('s', 'button')" class="min-w-32">
           <span class="font-bold">S</span>ame
